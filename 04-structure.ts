@@ -1,22 +1,20 @@
-// TODO: Refactor to improve structure and consistency
-
 class Book {
-  private _title: string;
-  public ISBN: string;
-  author_name: string;
+  private title: string;
+  public isbn: string;
+  public author: string;
 
   constructor(title: string, isbn: string, author: string) {
-    this._title = title;
-    this.ISBN = isbn;
-    this.author_name = author;
+    this.title = title;
+    this.isbn = isbn;
+    this.author = author;
   }
 
   saveToDatabase(): void {
     console.log("INSERT INTO books...");
   }
 
-  get_title(): string {
-    return this._title;
+  getTitle(): string {
+    return this.title;
   }
 
   sendNotification(email: string): void {
@@ -24,82 +22,79 @@ class Book {
   }
 }
 
-class library_manager {
+class LibraryManager {
   private calculateFee(days: number): number {
     return days * 0.5;
   }
 
-  public GetBook(isbn: string): Book {
+  public getBook(isbn: string): Book {
     console.log("SELECT * FROM books WHERE isbn = " + isbn);
     return new Book("Sample", isbn, "Author");
   }
 
-  private log_activity(action: string): void {
+  private logActivity(action: string): void {
     console.log("LOG: " + action);
   }
 
-  public checkout_book(bookISBN: string, userName: string): boolean {
+  public checkoutBook(bookISBN: string, userName: string): boolean {
     console.log("UPDATE books SET available = false");
-    this.log_activity("Checkout: " + bookISBN);
+    this.logActivity("Checkout: " + bookISBN);
     console.log("Email to " + userName);
 
-    if (this.validateUser(userName)) {
-      return true;
-    }
-    return false;
+    return this.validateUser(userName);
   }
 
-  private validateUser(user: string): boolean {
-    return user.length > 0;
+  private validateUser(userName: string): boolean {
+    return userName.length > 0;
   }
 
-  public Return_Book(isbn: string, user_name: string, daysLate: number): void {
+  public returnBook(isbn: string, userName: string, daysLate: number): void {
     if (daysLate > 0) {
       const fee = this.calculateFee(daysLate);
       console.log("UPDATE users SET balance = balance - " + fee);
     }
     console.log("UPDATE books SET available = true");
 
-    if (this.Check_Availability(isbn)) {
+    if (this.checkAvailability(isbn)) {
       console.log("Book available again");
     }
   }
 
-  public searchBooks(AuthorName: string): Book[] {
-    console.log("SELECT * FROM books WHERE author = " + AuthorName);
+  public searchBooksByAuthor(author: string): Book[] {
+    console.log("SELECT * FROM books WHERE author = " + author);
     return [];
   }
 
-  public reserve_Book(BookId: string, USER: string): void {
+  public reserveBook(bookId: string, userName: string): void {
     console.log("INSERT INTO reservations...");
-    this.log_activity("Reserve: " + BookId + " for " + USER);
+    this.logActivity("Reserve: " + bookId + " for " + userName);
   }
 
-  private Check_Availability(book_isbn: string): boolean {
+  private checkAvailability(bookIsbn: string): boolean {
     return true;
   }
 
-  public findByTitle(Title: string): Book[] {
-    console.log("Finding books with title: " + Title);
+  public findBooksByTitle(title: string): Book[] {
+    console.log("Finding books with title: " + title);
     return [];
   }
 }
 
 class UserAccount {
   public name: string;
-  private _email: string;
+  private email: string;
 
   constructor(name: string, email: string) {
     this.name = name;
-    this._email = email;
+    this.email = email;
   }
 
   loadFromDatabase(id: number): void {
     console.log("SELECT * FROM users WHERE id = " + id);
   }
 
-  GetEmail(): string {
-    return this._email;
+  getEmail(): string {
+    return this.email;
   }
 
   chargeLateFee(amount: number): void {
@@ -108,31 +103,31 @@ class UserAccount {
 }
 
 function main04() {
-  const manager = new library_manager();
+  const manager = new LibraryManager();
 
   const book = new Book("Clean Code", "123", "Martin");
   book.saveToDatabase();
   book.sendNotification("user@email.com");
 
-  manager.checkout_book("123", "john@email.com");
+  manager.checkoutBook("123", "john@email.com");
 
-  manager.Return_Book("123", "john", 5);
+  manager.returnBook("123", "john", 5);
 
   const user = new UserAccount("John", "john@email.com");
   user.loadFromDatabase(1);
   user.chargeLateFee(2.5);
 
-  console.log("Book title: " + book.get_title());
-  console.log("Book author: " + book.author_name);
-  console.log("User email: " + user.GetEmail());
+  console.log("Book title: " + book.getTitle());
+  console.log("Book author: " + book.author);
+  console.log("User email: " + user.getEmail());
   console.log("User name: " + user.name);
 
-  manager.searchBooks("Martin");
-  manager.findByTitle("Clean");
-  manager.reserve_Book("456", "ALICE");
+  manager.searchBooksByAuthor("Martin");
+  manager.findBooksByTitle("Clean");
+  manager.reserveBook("456", "ALICE");
 
-  const newBook = manager.GetBook("789");
-  console.log("Got book: " + newBook.ISBN);
+  const newBook = manager.getBook("789");
+  console.log("Got book: " + newBook.isbn);
 }
 
 main04();

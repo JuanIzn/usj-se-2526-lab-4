@@ -1,4 +1,4 @@
-class Order {
+class RestaurantOrder {  //Should I merge both RestaurantOrder classes?
   constructor(
     public id: number,
     public customerName: string,
@@ -11,9 +11,9 @@ class Order {
 }
 
 class RestaurantSystem {
-  private orders: Order[] = [];
+  private RestaurantOrders: RestaurantOrder[] = [];
 
-  processOrder(
+  processRestaurantOrder(
     name: string,
     phone: string,
     items: string[],
@@ -34,12 +34,12 @@ class RestaurantSystem {
 
     console.log("Charging: $" + total);
 
-    const orderId = Math.floor(Math.random() * 10000);
-    const order = new Order(orderId, name, phone, items, quantities, prices, address);
-    this.orders.push(order);
+    const RestaurantOrderId = Math.floor(Math.random() * 10000);
+    const RestaurantOrder = new RestaurantOrder(RestaurantOrderId, name, phone, items, quantities, prices, address);
+    this.RestaurantOrders.push(RestaurantOrder);
 
-    this.printOrderSummary(order, total);
-    this.notifyKitchen(orderId);
+    this.printRestaurantOrderSummary(RestaurantOrder, total);
+    this.notifyKitchen(RestaurantOrderId);
     this.sendSms(phone);
 
     return true;
@@ -103,36 +103,36 @@ class RestaurantSystem {
     return subtotal * 0.1;
   }
 
-  private printOrderSummary(order: Order, total: number): void {
-    console.log("ORDER #" + order.id);
-    for (let i = 0; i < order.items.length; i++) {
-      console.log(order.items[i] + " x" + order.quantities[i]);
+  private printRestaurantOrderSummary(RestaurantOrder: RestaurantOrder, total: number): void {
+    console.log("RestaurantOrder #" + RestaurantOrder.id);
+    for (let i = 0; i < RestaurantOrder.items.length; i++) {
+      console.log(RestaurantOrder.items[i] + " x" + RestaurantOrder.quantities[i]);
     }
     console.log("Total: $" + total);
   }
 
-  private notifyKitchen(orderId: number): void {
-    console.log("KITCHEN: #" + orderId);
+  private notifyKitchen(RestaurantOrderId: number): void {
+    console.log("KITCHEN: #" + RestaurantOrderId);
   }
 
   private sendSms(phone: string): void {
     console.log("SMS to " + phone);
   }
 
-  cancelOrder(orderId: number): void {
-    for (let i = 0; i < this.orders.length; i++) {
-      if (this.orders[i].id === orderId) {
-        const order = this.orders[i];
-        const total = this.calculateSubtotal(order.items, order.quantities, order.prices);
+  cancelRestaurantOrder(RestaurantOrderId: number): void {
+    for (let i = 0; i < this.RestaurantOrders.length; i++) {
+      if (this.RestaurantOrders[i].id === RestaurantOrderId) {
+        const RestaurantOrder = this.RestaurantOrders[i];
+        const total = this.calculateSubtotal(RestaurantOrder.items, RestaurantOrder.quantities, RestaurantOrder.prices);
 
         console.log("Refund: $" + total);
 
-        this.orders.splice(i, 1);
+        this.RestaurantOrders.splice(i, 1);
 
         console.log("SMS: Cancelled");
-        console.log("AUDIT: #" + orderId);
-        console.log("Customer: " + order.customerName);
-        console.log("Address: " + order.address);
+        console.log("AUDIT: #" + RestaurantOrderId);
+        console.log("Customer: " + RestaurantOrder.customerName);
+        console.log("Address: " + RestaurantOrder.address);
         break;
       }
     }
@@ -142,7 +142,7 @@ class RestaurantSystem {
 function main02() {
   const restaurant = new RestaurantSystem();
 
-  const success = restaurant.processOrder(
+  const success = restaurant.processRestaurantOrder(
     "Alice",
     "5551234567",
     ["Pizza", "Salad"],
@@ -156,7 +156,7 @@ function main02() {
     console.log("Success!");
   }
 
-  restaurant.cancelOrder(1234);
+  restaurant.cancelRestaurantOrder(1234);
 }
 
 main02();
