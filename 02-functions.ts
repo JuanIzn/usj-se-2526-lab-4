@@ -115,3 +115,48 @@ class RestaurantSystem {
     console.log("KITCHEN: #" + orderId);
   }
 
+  private sendSms(phone: string): void {
+    console.log("SMS to " + phone);
+  }
+
+  cancelOrder(orderId: number): void {
+    for (let i = 0; i < this.orders.length; i++) {
+      if (this.orders[i].id === orderId) {
+        const order = this.orders[i];
+        const total = this.calculateSubtotal(order.items, order.quantities, order.prices);
+
+        console.log("Refund: $" + total);
+
+        this.orders.splice(i, 1);
+
+        console.log("SMS: Cancelled");
+        console.log("AUDIT: #" + orderId);
+        console.log("Customer: " + order.customerName);
+        console.log("Address: " + order.address);
+        break;
+      }
+    }
+  }
+}
+
+function main02() {
+  const restaurant = new RestaurantSystem();
+
+  const success = restaurant.processOrder(
+    "Alice",
+    "5551234567",
+    ["Pizza", "Salad"],
+    [2, 1],
+    [15, 8],
+    "123 Main Street",
+    "4111111111111111"
+  );
+
+  if (success) {
+    console.log("Success!");
+  }
+
+  restaurant.cancelOrder(1234);
+}
+
+main02();
